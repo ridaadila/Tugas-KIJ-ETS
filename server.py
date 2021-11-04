@@ -6,11 +6,11 @@ def receiveData():
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind the socket to the port
-    server_address = ('20.121.18.52', 10000)
+    server_address = ('0.0.0.0', 10000)
     print(f"starting up on {server_address}")
     sock.bind(server_address)
     # Listen for incoming connections
-    hasil = ""
+    # hasil = ""
     sock.listen(1)
     while True:
         # Wait for a connection
@@ -21,7 +21,7 @@ def receiveData():
         while True:
             data = connection.recv(32)
             print(f"received {data}")
-            hasil += data
+            # hasil += data
             if data:
                 print("sending back data")
                 connection.sendall(data)
@@ -31,7 +31,7 @@ def receiveData():
                 break
         # Clean up the connection
     connection.close()
-    return hasil
+    # return hasil
 def convertToBin(s):
 	dictionary = {'0' : "0000",
 		'1' : "0001",
