@@ -6,32 +6,36 @@ def receiveData():
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind the socket to the port
-    server_address = ("0.0.0.0", 5001)
+    server_address = ("0.0.0.0", 5002)
     print(f"starting up on {server_address}")
     sock.bind(server_address)
     # Listen for incoming connections
-    # hasil = ""
+    hasil = ""
     sock.listen(1)
     while True:
         # Wait for a connection
         print("waiting for a connection")
         connection, client_address = sock.accept()
         print(f"connection from {client_address}")
+        found = 0
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(32)
             print(f"received {data}")
-            # hasil += data
+            hasil += str(data)
             if data:
-                print("sending back data")
-                connection.sendall(data)
+                print("masuk")
+                found = 1
+                break
             else:
                 #print >>sys.stderr, 'no more data from', client_address
                 #print(f"no more data from {client_address}")
                 break
+        if(found):
+             break
         # Clean up the connection
     connection.close()
-    # return hasil
+    return hasil
 def convertToBin(s):
 	dictionary = {'0' : "0000",
 		'1' : "0001",
@@ -312,6 +316,8 @@ def main():
         array_key_decimal.append(convertToDecimal(round_key))
 
     cipher_text = receiveData()
+    cipher_text = cipher_text[2:-1]
+    print(cipher_text)
 
     print("Dekripsi : ")
     array_key_binary_rev = array_key_binary[::-1]
