@@ -303,9 +303,11 @@ def DES(plain_text,is_encrypt):
 		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary, array_key_decimal))
 		sys.stdout.write("Encrypted Text: ")
 		sys.stdout.write(cipher_text)
+		sys.stdout.write("\n")
 		sys.stdout.flush()
 	else:
 		sys.stdout.write("--DEKRIPSI--\n")
+		print(cipher_text)
 		array_key_binary_rev = array_key_binary[::-1]
 		array_key_decimal_rev = array_key_decimal[::-1]
 		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary_rev, array_key_decimal_rev))
