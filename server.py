@@ -15,11 +15,37 @@ sock.listen(2)
 
 clients = []
 
+def handleClient(conn,addr):
+	conn.send("You Are Connected to The Server.")
+	while True:
+		try:
+			message = conn.recv(2048)
+			if message:
+				tmp = "(" + addr[0] + "): " + message
+				print(tmp)
+				sendToOther(tmp,conn)
+			else:
+				print("Something went wrong.")
+				exit()
+		except:
+			continue
+
+def sendToOther(message,conn):
+	for c in clients:
+		if c != conn:
+			try:
+				c.send(message)
+			except:
+				print("Something went wrong.")
+				c.close()
+				exit()
+
 while True:
 	print("Waiting for connection")
 	conn,addr = sock.accept()
 	clients.append(conn)
 	print(addr[0] + " connected")
+	_thread.start_new_thread(handleClient(conn,addr))
 
 
 def convertToBin(s):
