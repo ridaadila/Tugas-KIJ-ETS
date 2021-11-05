@@ -13,6 +13,7 @@ while True:
 		if (s == sock):
 			message = sock.recv(2048)
 			sys.stdout.write(message.decode())
+			sys.stdout.flush()
 		else:
 			message = sys.stdin.readline()
 			sock.send(message.encode())
