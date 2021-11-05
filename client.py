@@ -331,6 +331,7 @@ while True:
 				plain_text = tmp[1]
 				message = DES(plain_text,0)
 			sys.stdout.write(message)
+			sys.stdout.write("\n")
 			sys.stdout.flush()
 		else:
 			message = sys.stdin.readline()
