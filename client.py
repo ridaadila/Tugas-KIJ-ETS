@@ -1,13 +1,18 @@
 import sys
 import socket
+import time
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(('20.121.18.52',5002))
+sock.connect(('20.121.18.52',5001))
 
-while True:
-	message = sock.recv(2048)
-	if (message):
-		print(message)
+message = sock.recv(2048)
+if (message):
+	print(message.decode())
+tmp = "hello"
+sock.send(tmp.encode())
+time.sleep(60)
+sock.close()
+exit()
 
 # konversi desimal ke binary
 def convertToBin(s):
