@@ -1,41 +1,27 @@
 import sys
 import socket
+import select
+import _thread
 # konversi desimal ke binary
 
-def receiveData():
-    # Create a TCP/IP socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # Bind the socket to the port
-    server_address = ("0.0.0.0", 5002)
-    print(f"starting up on {server_address}")
-    sock.bind(server_address)
-    # Listen for incoming connections
-    hasil = ""
-    sock.listen(1)
-    while True:
-        # Wait for a connection
-        print("waiting for a connection")
-        connection, client_address = sock.accept()
-        print(f"connection from {client_address}")
-        found = 0
-        # Receive the data in small chunks and retransmit it
-        while True:
-            data = connection.recv(32)
-            print(f"received {data}")
-            hasil += str(data)
-            if data:
-                print("masuk")
-                found = 1
-                break
-            else:
-                #print >>sys.stderr, 'no more data from', client_address
-                #print(f"no more data from {client_address}")
-                break
-        if(found):
-             break
-        # Clean up the connection
-    connection.close()
-    return hasil
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Bind the socket to the port
+server_address = ("0.0.0.0", 5002)
+print(f"starting up on {server_address}")
+sock.bind(server_address)
+# Listen for incoming connections
+hasil = ""
+sock.listen(2)
+
+clients = []
+
+while True:
+	print("Waiting for connection")
+	conn,addr = sock.accept()
+	clients.append(conn)
+	print(addr[0] + " connected")
+
+
 def convertToBin(s):
 	dictionary = {'0' : "0000",
 		'1' : "0001",
