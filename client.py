@@ -1,3 +1,4 @@
+from os import PathLike
 import sys
 import socket
 import time
@@ -296,6 +297,7 @@ def DES(plain_text,is_encrypt):
 		array_key_binary.append(round_key)
 		array_key_decimal.append(convertToDecimal(round_key))
 	cipher_text = plain_text
+	plain_text = plain_text[:-1]
 	if (is_encrypt):
 		sys.stdout.writelines("--ENKRIPSI--")
 		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary, array_key_decimal))
