@@ -5,6 +5,8 @@ import _thread
 # konversi desimal ke binary
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 # Bind the socket to the port
 server_address = ("0.0.0.0", 5002)
 print(f"starting up on {server_address}")

@@ -12,12 +12,12 @@ while True:
 	for s in streams:
 		if (s == sock):
 			message = sock.recv(2048)
-			print(message.decode())
+			sys.stdout.write(message.decode())
 		else:
 			message = sys.stdin.readline()
 			sock.send(message.encode())
 			tmp = "(You) " + message
-			sys.stdout.write(message)
+			sys.stdout.write(tmp)
 			sys.stdout.flush()
 sock.close()
 
