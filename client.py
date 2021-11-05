@@ -198,11 +198,12 @@ tabel_invers_permutasi = [ 40, 8, 48, 16, 56, 24, 64, 32,
 			33, 1, 41, 9, 49, 17, 57, 25 ]
 
 def encrypt(pt, array_key_binary, array_key_decimal):
+	print(pt + " masuk")
 	pt = convertToBin(pt)
-	print("Sebelum dilakukan initial permutation : ", pt)
+	print("Sebelum dilakukan initial permutation : ", convertToDecimal(pt))
 	# Mengacak bit plain text dengan tabel Initial Permutation
 	pt = permute(pt, tabel_initial_permutaion, 64)
-	print("Setelah dilakukan initial permutation : ", pt)
+	print("Setelah dilakukan initial permutation : ", convertToDecimal(pt))
 	
 	# membagi hasil initial permutation menjadi 2 bagian kiri & kanan
 	left = pt[0:32]
@@ -297,8 +298,9 @@ def DES(plain_text,is_encrypt):
 		array_key_binary.append(round_key)
 		array_key_decimal.append(convertToDecimal(round_key))
 	cipher_text = plain_text
-	plain_text = plain_text[:-1]
+	# plain_text = plain_text[:-1]
 	if (is_encrypt):
+		plain_text = plain_text[:-1]
 		sys.stdout.write("--ENKRIPSI--\n")
 		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary, array_key_decimal))
 		sys.stdout.write("Encrypted Text: ")
