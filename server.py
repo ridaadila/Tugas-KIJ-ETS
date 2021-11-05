@@ -16,7 +16,8 @@ sock.listen(2)
 clients = []
 
 def handleClient(conn,addr):
-	conn.send("You Are Connected to The Server.")
+	welcome = "You Are Connected to The Server."
+	conn.send(welcome.encode())
 	while True:
 		try:
 			message = conn.recv(2048)
@@ -34,7 +35,7 @@ def sendToOther(message,conn):
 	for c in clients:
 		if c != conn:
 			try:
-				c.send(message)
+				c.send(message.encode())
 			except:
 				print("Something went wrong.")
 				c.close()

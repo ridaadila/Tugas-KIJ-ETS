@@ -5,7 +5,9 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect(('20.121.18.52',5002))
 
 while True:
-	print("connected..")
+	message = sock.recv(2048)
+	if (message):
+		print(message)
 
 # konversi desimal ke binary
 def convertToBin(s):
