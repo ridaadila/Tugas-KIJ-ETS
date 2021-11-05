@@ -1,18 +1,35 @@
 import sys
 import socket
 import time
+import select
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(('20.121.18.52',5001))
+sock.connect(('20.121.18.52',5002))
 
-message = sock.recv(2048)
-if (message):
-	print(message.decode())
-tmp = "hello"
-sock.send(tmp.encode())
-time.sleep(60)
+while True:
+	streams = [sys.stdin,sock]
+	read_sockets,write_socket, error_socket = select.select(streams,[],[])
+	for s in streams:
+		if (s == sock):
+			message = sock.recv(2048)
+			print(message.decode())
+		else:
+			message = sys.stdin.readline()
+			sock.send(message.encode())
+			tmp = "(You) " + message
+			sys.stdout.write(message)
+			sys.stdout.flush()
 sock.close()
-exit()
+
+
+# message = sock.recv(2048)
+# if (message):
+# 	print(message.decode())
+# tmp = "hello"
+# sock.send(tmp.encode())
+# time.sleep(60)
+# sock.close()
+# exit()
 
 # konversi desimal ke binary
 def convertToBin(s):

@@ -47,7 +47,7 @@ while True:
 	conn,addr = sock.accept()
 	clients.append(conn)
 	print(addr[0] + " connected")
-	_thread.start_new_thread(handleClient(conn,addr))
+	_thread.start_new_thread(handleClient,(conn,addr))
 
 
 def convertToBin(s):
