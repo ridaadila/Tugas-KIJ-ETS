@@ -199,10 +199,10 @@ tabel_invers_permutasi = [ 40, 8, 48, 16, 56, 24, 64, 32,
 
 def encrypt(pt, array_key_binary, array_key_decimal):
 	pt = convertToBin(pt)
-	print("Sebelum dilakukan initial permutation : ", pt)
+	# print("Sebelum dilakukan initial permutation : ", pt)
 	# Mengacak bit plain text dengan tabel Initial Permutation
 	pt = permute(pt, tabel_initial_permutaion, 64)
-	print("Setelah dilakukan initial permutation : ", pt)
+	# print("Setelah dilakukan initial permutation : ", pt)
 	
 	# membagi hasil initial permutation menjadi 2 bagian kiri & kanan
 	left = pt[0:32]
@@ -234,7 +234,7 @@ def encrypt(pt, array_key_binary, array_key_decimal):
 		# melakukan penukaran
 		if(i != 15):
 			left, right = right, left
-		print("Round ", i + 1, " : ", "Left : ", convertToDecimal(left), ", Right:  ", convertToDecimal(right), " ", array_key_decimal[i])
+		# print("Round ", i + 1, " : ", "Left : ", convertToDecimal(left), ", Right:  ", convertToDecimal(right), " ", array_key_decimal[i])
 	
 	# menggabungkan yg sebelah kiri dgn kanan
 	hasil = left + right
@@ -324,7 +324,9 @@ while True:
 		if (s == sock):
 			message = sock.recv(2048).decode()
 			if (message != "You Are Connected to The Server."):
-				message = DES(message,0)
+				tmp = message.split()
+				plain_text = tmp[1]
+				message = DES(plain_text,0)
 			sys.stdout.write(message)
 			sys.stdout.flush()
 		else:
