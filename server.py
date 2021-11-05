@@ -11,7 +11,7 @@ print(f"starting up on {server_address}")
 sock.bind(server_address)
 # Listen for incoming connections
 hasil = ""
-sock.listen(2)
+sock.listen(100)
 
 clients = []
 
@@ -21,8 +21,9 @@ def handleClient(conn,addr):
 	while True:
 		try:
 			message = conn.recv(2048)
+			print("masuk")
 			if message:
-				tmp = "(" + addr[0] + "): " + message
+				tmp = "(" + addr[0] + "): " + message.decode()
 				print(tmp)
 				sendToOther(tmp,conn)
 			else:
