@@ -3,24 +3,7 @@ import socket
 import time
 import select
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(('20.121.18.52',5002))
 
-while True:
-	streams = [sys.stdin,sock]
-	read_sockets,write_socket, error_socket = select.select(streams,[],[])
-	for s in streams:
-		if (s == sock):
-			message = sock.recv(2048)
-			sys.stdout.write(message.decode())
-			sys.stdout.flush()
-		else:
-			message = sys.stdin.readline()
-			sock.send(message.encode())
-			tmp = "(You) " + message
-			sys.stdout.write(tmp)
-			sys.stdout.flush()
-sock.close()
 
 
 # message = sock.recv(2048)
@@ -259,14 +242,13 @@ def encrypt(pt, array_key_binary, array_key_decimal):
 	cipher_text = permute(hasil, tabel_invers_permutasi, 64)
 	return cipher_text
 
+ENCRYPT_KEY = "AABB09182736CCDD"
 
-def main():
+def DES(plain_text,is_encrypt):
 
-    plain_text = "123456ABCD132536"
-    key = "AABB09182736CCDD"
-    key = convertToBin(key)
+	key = convertToBin(ENCRYPT_KEY)
 
-    tabel_permute_choice_1 = [57, 49, 41, 33, 25, 17, 9,
+	tabel_permute_choice_1 = [57, 49, 41, 33, 25, 17, 9,
 								1, 58, 50, 42, 34, 26, 18,
 								10, 2, 59, 51, 43, 35, 27,
 								19, 11, 3, 60, 52, 44, 36,
@@ -275,17 +257,17 @@ def main():
 								14, 6, 61, 53, 45, 37, 29,
 								21, 13, 5, 28, 20, 12, 4 ]
 
-    # melakukan permute choice key 1
-    key = permute(key, tabel_permute_choice_1, 56)
+	# melakukan permute choice key 1
+	key = permute(key, tabel_permute_choice_1, 56)
 
-    # table round shift
-    round_shift_table = [1, 1, 2, 2,
-                    2, 2, 2, 2,
-                    1, 2, 2, 2,
-                    2, 2, 2, 1 ]
+	# table round shift
+	round_shift_table = [1, 1, 2, 2,
+					2, 2, 2, 2,
+					1, 2, 2, 2,
+					2, 2, 2, 1 ]
 
-    # memotong key dari 56 bit menjadi 48 bit
-    tabel_permute_choice_2 = [14, 17, 11, 24, 1, 5,
+	# memotong key dari 56 bit menjadi 48 bit
+	tabel_permute_choice_2 = [14, 17, 11, 24, 1, 5,
 								3, 28, 15, 6, 21, 10,
 								23, 19, 12, 4, 26, 8,
 								16, 7, 27, 20, 13, 2,
@@ -294,30 +276,62 @@ def main():
 								44, 49, 39, 56, 34, 53,
 								46, 42, 50, 36, 29, 32 ]
 
-    # memecah 56 bit dari key menjadi 2 bagian
-    left = key[0:28] # array_key_binary for RoundKeys in binary
-    right = key[28:56] # array_key_decimal for RoundKeys in hexadecimal
+	# memecah 56 bit dari key menjadi 2 bagian
+	left = key[0:28] # array_key_binary for RoundKeys in binary
+	right = key[28:56] # array_key_decimal for RoundKeys in hexadecimal
 
-    array_key_binary = []
-    array_key_decimal = []
-    for i in range(0, 16):
-        # memindahkan bit ke belakang sesuai tabel round shift
-        left = pindah_belakang(left, round_shift_table[i])
-        right = pindah_belakang(right, round_shift_table[i])
-        
-        # menyatukan key sebelah kiri dan kanan
-        combine_str = left + right
-        
-        # mengubah key yg 56 bit menjadi 48 bit
-        round_key = permute(combine_str, tabel_permute_choice_2, 48)
+	array_key_binary = []
+	array_key_decimal = []
+	for i in range(0, 16):
+		# memindahkan bit ke belakang sesuai tabel round shift
+		left = pindah_belakang(left, round_shift_table[i])
+		right = pindah_belakang(right, round_shift_table[i])
+		
+		# menyatukan key sebelah kiri dan kanan
+		combine_str = left + right
+		
+		# mengubah key yg 56 bit menjadi 48 bit
+		round_key = permute(combine_str, tabel_permute_choice_2, 48)
 
-        array_key_binary.append(round_key)
-        array_key_decimal.append(convertToDecimal(round_key))
+		array_key_binary.append(round_key)
+		array_key_decimal.append(convertToDecimal(round_key))
+	cipher_text = plain_text
+	if (is_encrypt):
+		sys.stdout.writelines("--ENKRIPSI--")
+		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary, array_key_decimal))
+		sys.stdout.write("Encrypted Text: ")
+		sys.stdout.writelines(cipher_text)
+		sys.stdout.flush()
+	else:
+		sys.stdout.writelines("--DEKRIPSI--")
+		array_key_binary_rev = array_key_binary[::-1]
+		array_key_decimal_rev = array_key_decimal[::-1]
+		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary_rev, array_key_decimal_rev))
+		sys.stdout.write("Decrypted Text: ")
+		sys.stdout.writelines(cipher_text)
+		sys.stdout.flush()
+	return cipher_text
 
-    print("Enkripsi : ")
-    cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary, array_key_decimal))
-    print("Cipher Text : ",cipher_text)
-    sendData(cipher_text)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('20.121.18.52',5002))
 
+while True:
+	streams = [sys.stdin,sock]
+	read_sockets,write_socket, error_socket = select.select(streams,[],[])
+	for s in streams:
+		if (s == sock):
+			message = sock.recv(2048).decode()
+			if (message != "You Are Connected to The Server."):
+				message = DES(message,0)
+			sys.stdout.write(message)
+			sys.stdout.flush()
+		else:
+			message = sys.stdin.readline()
+			tmp = "(You) " + message
+			message = DES(message,1)
+			sock.send(message.encode())
+			sys.stdout.write(tmp)
+			sys.stdout.flush()
+sock.close()
 
 main()
