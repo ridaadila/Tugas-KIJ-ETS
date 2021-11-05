@@ -299,18 +299,19 @@ def DES(plain_text,is_encrypt):
 	cipher_text = plain_text
 	plain_text = plain_text[:-1]
 	if (is_encrypt):
-		sys.stdout.writelines("--ENKRIPSI--")
+		sys.stdout.write("--ENKRIPSI--\n")
 		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary, array_key_decimal))
 		sys.stdout.write("Encrypted Text: ")
-		sys.stdout.writelines(cipher_text)
+		sys.stdout.write(cipher_text)
 		sys.stdout.flush()
 	else:
-		sys.stdout.writelines("--DEKRIPSI--")
+		sys.stdout.write("--DEKRIPSI--\n")
 		array_key_binary_rev = array_key_binary[::-1]
 		array_key_decimal_rev = array_key_decimal[::-1]
 		cipher_text = convertToDecimal(encrypt(plain_text, array_key_binary_rev, array_key_decimal_rev))
 		sys.stdout.write("Decrypted Text: ")
-		sys.stdout.writelines(cipher_text)
+		sys.stdout.write(cipher_text)
+		sys.stdout.write("\n")
 		sys.stdout.flush()
 	return cipher_text
 
@@ -335,6 +336,7 @@ while True:
 			message = DES(message,1)
 			sock.send(message.encode())
 			sys.stdout.write(tmp)
+			sys.stdout.write("\n")
 			sys.stdout.flush()
 sock.close()
 
