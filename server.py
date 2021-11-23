@@ -15,43 +15,6 @@ sock.bind(server_address)
 hasil = ""
 sock.listen(100)
 
-clients = []
-
-def handleClient(conn,addr):
-	welcome = "You Are Connected to The Server."
-	conn.send(welcome.encode())
-	while True:
-		try:
-			message = conn.recv(2048)
-			print("masuk")
-			if message:
-				tmp = "(" + addr[0] + "): " + message.decode()
-				print(tmp)
-				sendToOther(tmp,conn)
-			else:
-				print("Something went wrong.")
-				exit()
-		except:
-			continue
-
-def sendToOther(message,conn):
-	for c in clients:
-		if c != conn:
-			try:
-				c.send(message.encode())
-			except:
-				print("Something went wrong.")
-				c.close()
-				exit()
-
-while True:
-	print("Waiting for connection")
-	conn,addr = sock.accept()
-	clients.append(conn)
-	print(addr[0] + " connected")
-	_thread.start_new_thread(handleClient,(conn,addr))
-
-
 def convertToBin(s):
 	dictionary = {'0' : "0000",
 		'1' : "0001",
@@ -125,6 +88,64 @@ def dec2bin(num):
 		for i in range(0, counter):
 			res = '0' + res
 	return res
+
+##PUBLIC KEY (p = 3,q = 5)
+n = 15
+e = 2
+d = 8
+def encrypt(tmp):
+	print("Before: " + tmp)
+	biner = convertToBin(tmp)
+	encrypted = ""
+	for i in range(0,len(biner),4):
+		ch = ""
+		ch = biner[i] + biner[i + 1] + biner[i + 2] + biner[i + 3]
+		num = int(bin2dec(ch))
+		num = pow(num,e) % n
+		ch = dec2bin(num)
+		encrypted = encrypted + ch
+	encrypted = convertToDecimal(encrypted)
+	print("Encrypted Message: " + encrypted)
+	return encrypted
+
+ENCRYPT_KEY = "AABB09182736CCDD"
+clients = []
+
+def handleClient(conn,addr):
+	welcome = "You Are Connected to The Server."
+	conn.send(welcome.encode())
+	while True:
+		try:
+			message = conn.recv(2048)
+			print("masuk")
+			if message:
+				msg = message.decode() + ENCRYPT_KEY
+				msg = encrypt(msg)
+				tmp = "(" + addr[0] + "): " + msg
+				sendToOther(tmp,conn)
+			else:
+				print("Something went wrong.")
+				exit()
+		except:
+			continue
+
+def sendToOther(message,conn):
+	for c in clients:
+		if c != conn:
+			try:
+				c.send(message.encode())
+			except:
+				print("Something went wrong.")
+				c.close()
+				exit()
+
+while True:
+	print("Waiting for connection")
+	conn,addr = sock.accept()
+	clients.append(conn)
+	print(addr[0] + " connected")
+	_thread.start_new_thread(handleClient,(conn,addr))
+
 
 def permute(k, tabel_permute_choice_1, n):
 	permutation = ""
