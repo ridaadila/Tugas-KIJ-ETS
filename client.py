@@ -345,9 +345,14 @@ def handleRecv(s):
 			plain_text = message_key[0:16]
 			key = message_key[16:32]
 
+			print("Before: " + plain_text + " " + key)
+
 			plain_text = decryptRSA(plain_text)
 			ENCRYPT_KEY = decryptRSA(key)
-			
+
+			print("After: " + plain_text + " " + key)
+			exit()
+
 			message = DES(plain_text,0)
 		print("(Friend) " + message)
 
