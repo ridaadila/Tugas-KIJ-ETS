@@ -3,7 +3,7 @@ import sys
 import socket
 import time
 import select
-
+import _thread
 
 
 
@@ -198,12 +198,12 @@ tabel_invers_permutasi = [ 40, 8, 48, 16, 56, 24, 64, 32,
 			33, 1, 41, 9, 49, 17, 57, 25 ]
 
 def encrypt(pt, array_key_binary, array_key_decimal):
-	print(pt + " masuk")
+	# print(pt + " masuk")
 	pt = convertToBin(pt)
-	print("Sebelum dilakukan initial permutation : ", convertToDecimal(pt))
+	# print("Sebelum dilakukan initial permutation : ", convertToDecimal(pt))
 	# Mengacak bit plain text dengan tabel Initial Permutation
 	pt = permute(pt, tabel_initial_permutaion, 64)
-	print("Setelah dilakukan initial permutation : ", convertToDecimal(pt))
+	# print("Setelah dilakukan initial permutation : ", convertToDecimal(pt))
 	
 	# membagi hasil initial permutation menjadi 2 bagian kiri & kanan
 	left = pt[0:32]
@@ -235,7 +235,7 @@ def encrypt(pt, array_key_binary, array_key_decimal):
 		# melakukan penukaran
 		if(i != 15):
 			left, right = right, left
-		print("Round ", i + 1, " : ", "Left : ", convertToDecimal(left), ", Right:  ", convertToDecimal(right), " ", array_key_decimal[i])
+		# print("Round ", i + 1, " : ", "Left : ", convertToDecimal(left), ", Right:  ", convertToDecimal(right), " ", array_key_decimal[i])
 	
 	# menggabungkan yg sebelah kiri dgn kanan
 	hasil = left + right
@@ -319,30 +319,51 @@ def DES(plain_text,is_encrypt):
 		sys.stdout.flush()
 	return cipher_text
 
+def handleRecv(s):
+	message = sock.recv(2048).decode()
+	if (message != "You Are Connected to The Server."):
+		tmp = message.split()
+		plain_text = tmp[1]
+		message = DES(plain_text,0)
+	sys.stdout.write(message)
+	sys.stdout.write("\n")
+	sys.stdout.flush()
+
+def handleSend(s):
+	message = sys.stdin.readline()
+	tmp = "(You) " + message
+	message = DES(message,1)
+	sock.send(message.encode())
+	sys.stdout.write(tmp)
+	sys.stdout.write("\n")
+	sys.stdout.flush()
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect(('20.121.18.52',5002))
 
 while True:
-	streams = [sys.stdin,sock]
-	read_sockets,write_socket, error_socket = select.select(streams,[],[])
-	for s in streams:
-		if (s == sock):
-			message = sock.recv(2048).decode()
-			if (message != "You Are Connected to The Server."):
-				tmp = message.split()
-				plain_text = tmp[1]
-				message = DES(plain_text,0)
-			sys.stdout.write(message)
-			sys.stdout.write("\n")
-			sys.stdout.flush()
-		else:
-			message = sys.stdin.readline()
-			tmp = "(You) " + message
-			message = DES(message,1)
-			sock.send(message.encode())
-			sys.stdout.write(tmp)
-			sys.stdout.write("\n")
-			sys.stdout.flush()
+	_thread.start_new_thread(handleRecv,(sock))
+	_thread.start_new_thread(handleSend,(sock))
+	# streams = [sys.stdin,sock]
+	# read_sockets,write_socket, error_socket = select.select(streams,[],[])
+	# for s in streams:
+	# 	if (s == sock):
+	# 		message = sock.recv(2048).decode()
+	# 		if (message != "You Are Connected to The Server."):
+	# 			tmp = message.split()
+	# 			plain_text = tmp[1]
+	# 			message = DES(plain_text,0)
+	# 		sys.stdout.write(message)
+	# 		sys.stdout.write("\n")
+	# 		sys.stdout.flush()
+	# 	else:
+	# 		message = sys.stdin.readline()
+	# 		tmp = "(You) " + message
+	# 		message = DES(message,1)
+	# 		sock.send(message.encode())
+	# 		sys.stdout.write(tmp)
+	# 		sys.stdout.write("\n")
+	# 		sys.stdout.flush()
 sock.close()
 
 main()
