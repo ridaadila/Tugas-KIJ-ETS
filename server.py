@@ -100,7 +100,9 @@ def encrypt(tmp):
 	for i in range(0,len(biner),4):
 		ch = biner[i] + biner[i + 1] + biner[i + 2] + biner[i + 3]
 		num = int(bin2dec(int(ch)))
+		print("bef: " + str(num))
 		num = pow(num,e) % n
+		print("aft: " + str(num))
 		ch = dec2bin(num)
 		encrypted = encrypted + ch
 	encrypted = convertToDecimal(encrypted)
