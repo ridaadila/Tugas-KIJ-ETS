@@ -98,9 +98,8 @@ def encrypt(tmp):
 	biner = convertToBin(tmp)
 	encrypted = ""
 	for i in range(0,len(biner),4):
-		ch = ""
 		ch = biner[i] + biner[i + 1] + biner[i + 2] + biner[i + 3]
-		num = int(bin2dec(ch))
+		num = int(bin2dec(int(ch)))
 		num = pow(num,e) % n
 		ch = dec2bin(num)
 		encrypted = encrypted + ch
