@@ -130,7 +130,7 @@ def sendToOther(message,conn):
 	for c in clients:
 		if c != conn:
 			try:
-				c.send(message.encode())
+				c.send(message)
 			except:
 				print("Something went wrong.")
 				c.close()
