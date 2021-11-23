@@ -333,6 +333,7 @@ def decryptRSA(msg):
 		decrypted = decrypted + ch
 	decrypted = convertToDecimal(decrypted)
 	print("Decrypted Message: " + decrypted)
+	return decrypted
 
 def handleRecv(s):
 	while True:
