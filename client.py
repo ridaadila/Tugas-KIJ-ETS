@@ -248,8 +248,8 @@ def encrypt(pt, array_key_binary, array_key_decimal):
 ENCRYPT_KEY = "AABB09182736CCDD"
 
 ##PRIVATE KEY
-n = 15
-d = 8
+n = 33
+d = 7
 
 def DES(plain_text,is_encrypt):
 
@@ -349,7 +349,7 @@ def handleRecv(s):
 			plain_text = decryptRSA(plain_text)
 			ENCRYPT_KEY = decryptRSA(key)
 
-			print("After: " + plain_text + " " + key)
+			# print("After: " + plain_text + " " + key)
 			exit()
 
 			message = DES(plain_text,0)
