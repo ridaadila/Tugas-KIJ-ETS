@@ -2,6 +2,7 @@ import sys
 import socket
 import select
 import _thread
+import pickle
 # konversi desimal ke binary
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -90,31 +91,25 @@ def dec2bin(num):
 	return res
 
 ##PUBLIC KEY (p = 3,q = 5)
-n = 15
-e = 2
-d = 8
+n = 33
+e = 3
+d = 7
 def encrypt(tmp):
 	print("Before: " + tmp)
 	biner = convertToBin(tmp)
-	encrypted = ""
+	encrypted = []
 	for i in range(0,len(biner),4):
 		ch = biner[i] + biner[i + 1] + biner[i + 2] + biner[i + 3]
 		num = int(bin2dec(int(ch)))
-		print("bef: " + str(num))
 		num = pow(num,e) % n
-		print("aft: " + str(num))
-		ch = dec2bin(num)
-		encrypted = encrypted + ch
-	encrypted = convertToDecimal(encrypted)
-	print("Encrypted Message: " + encrypted)
+		encrypt.append(num)
+	print("Encrypted Message: " + str(encrypted))
 	return encrypted
 
 ENCRYPT_KEY = "AABB09182736CCDD"
 clients = []
 
 def handleClient(conn,addr):
-	welcome = "You Are Connected to The Server."
-	conn.send(welcome.encode())
 	while True:
 		try:
 			message = conn.recv(2048)
@@ -123,7 +118,8 @@ def handleClient(conn,addr):
 				msg = message.decode() + ENCRYPT_KEY
 				msg = encrypt(msg)
 				tmp = "(" + addr[0] + "): " + msg
-				sendToOther(tmp,conn)
+				data = pickle.dumps(msg)
+				sendToOther(data,conn)
 			else:
 				print("Something went wrong.")
 				exit()

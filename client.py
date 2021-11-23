@@ -1,4 +1,5 @@
 from os import PathLike
+import pickle
 import sys
 import socket
 import time
@@ -324,11 +325,9 @@ def DES(plain_text,is_encrypt):
 	return cipher_text
 
 def decryptRSA(msg):
-	biner = convertToBin(msg)
 	decrypted = ""
-	for i in range(0,len(biner),4):
-		ch = biner[i] + biner[i + 1] + biner[i + 2] + biner[i + 3]
-		num = int(bin2dec(int(ch)))
+	for i in range(0,len(msg)):
+		num = msg[i]
 		num = pow(num,d) % n
 		ch = dec2bin(num)
 		decrypted = decrypted + ch
@@ -337,10 +336,10 @@ def decryptRSA(msg):
 
 def handleRecv(s):
 	while True:
-		message = s.recv(2048).decode()
+		message = s.recv(2048)
+		message_key = pickle.loads(message)
+		print("message_key: " + str(message_key))
 		if (message != "You Are Connected to The Server."):
-			tmp = message.split()
-			message_key = tmp[1]
 
 			plain_text = message_key[0:16]
 			key = message_key[16:32]
