@@ -246,6 +246,10 @@ def encrypt(pt, array_key_binary, array_key_decimal):
 
 ENCRYPT_KEY = "AABB09182736CCDD"
 
+##PRIVATE KEY
+n = 15
+d = 8
+
 def DES(plain_text,is_encrypt):
 
 	key = convertToBin(ENCRYPT_KEY)
@@ -319,16 +323,33 @@ def DES(plain_text,is_encrypt):
 		sys.stdout.flush()
 	return cipher_text
 
+def decryptRSA(msg):
+	biner = convertToBin(msg)
+	decrypted = ""
+	for i in range(0,len(biner),4):
+		ch = biner[i] + biner[i + 1] + biner[i + 2] + biner[i + 3]
+		num = int(bin2dec(int(ch)))
+		num = pow(num,d) % n
+		ch = dec2bin(num)
+		decrypted = decrypted + ch
+	decrypted = convertToDecimal(decrypted)
+	print("Decrypted Message: " + decrypted)
+
 def handleRecv(s):
 	while True:
 		message = s.recv(2048).decode()
 		if (message != "You Are Connected to The Server."):
 			tmp = message.split()
-			plain_text = tmp[1]
+			message_key = tmp[1]
+
+			plain_text = message_key[0:16]
+			key = message_key[16:32]
+
+			plain_text = decryptRSA(plain_text)
+			ENCRYPT_KEY = decryptRSA(key)
+			
 			message = DES(plain_text,0)
-		sys.stdout.write(message)
-		sys.stdout.write("\n")
-		sys.stdout.flush()
+		print("(Friend) " + message)
 
 def handleSend(s):
 	while True:
