@@ -338,10 +338,9 @@ def handleSend(s):
 	sys.stdout.write("\n")
 	sys.stdout.flush()
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(('20.121.18.52',5002))
-
 while True:
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.connect(('20.121.18.52',5002))
 	threading.Thread(target=handleRecv,args=(sock,)).start()
 	threading.Thread(target=handleSend,args=(sock,)).start()
 
