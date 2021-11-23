@@ -116,10 +116,10 @@ def handleClient(conn,addr):
 			print("masuk")
 			if message:
 				msg = message.decode() + ENCRYPT_KEY
-				msg = encrypt(msg)
-				tmp = "(" + addr[0] + "): " + msg
-				# data = pickle.dumps(msg)
-				sendToOther(msg,conn)
+				msg2 = encrypt(msg)
+				# tmp = "(" + addr[0] + "): " + msg
+				data = pickle.dumps(msg2)
+				sendToOther(data,conn)
 			else:
 				print("Something went wrong.")
 				exit()
@@ -130,8 +130,8 @@ def sendToOther(message,conn):
 	for c in clients:
 		if c != conn:
 			try:
-				data_pickle = pickle.dumps(message)
-				print(data_pickle)
+				# data_pickle = pickle.dumps(message)
+				# print(data_pickle)
 				c.send(message)
 			except:
 				print("Something went wrong.")
