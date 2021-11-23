@@ -320,7 +320,7 @@ def DES(plain_text,is_encrypt):
 	return cipher_text
 
 def handleRecv(s):
-	message = sock.recv(2048).decode()
+	message = s.recv(2048).decode()
 	if (message != "You Are Connected to The Server."):
 		tmp = message.split()
 		plain_text = tmp[1]
@@ -333,14 +333,15 @@ def handleSend(s):
 	message = sys.stdin.readline()
 	tmp = "(You) " + message
 	message = DES(message,1)
-	sock.send(message.encode())
+	s.send(message.encode())
 	sys.stdout.write(tmp)
 	sys.stdout.write("\n")
 	sys.stdout.flush()
 
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('20.121.18.52',5002))
+
 while True:
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.connect(('20.121.18.52',5002))
 	threading.Thread(target=handleRecv,args=(sock,)).start()
 	threading.Thread(target=handleSend,args=(sock,)).start()
 
