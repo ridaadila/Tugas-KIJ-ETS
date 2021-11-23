@@ -102,7 +102,7 @@ def encrypt(tmp):
 		ch = biner[i] + biner[i + 1] + biner[i + 2] + biner[i + 3]
 		num = int(bin2dec(int(ch)))
 		num = pow(num,e) % n
-		encrypt.append(num)
+		encrypted.append(num)
 	print("Encrypted Message: " + str(encrypted))
 	return encrypted
 
