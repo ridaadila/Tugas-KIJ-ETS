@@ -3,7 +3,7 @@ import sys
 import socket
 import time
 import select
-import _thread
+import threading
 
 
 
@@ -341,8 +341,11 @@ def handleSend(s):
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect(('20.121.18.52',5002))
 
-_thread.start_new_thread(handleRecv(sock))
-_thread.start_new_thread(handleSend(sock))
+threading.Thread(target=handleRecv,args=(sock,)).start()
+threading.Thread(target=handleSend,args=(sock,)).start()
+
+# _thread.start_new_thread(handleRecv(sock))
+# _thread.start_new_thread(handleSend(sock))
 	# streams = [sys.stdin,sock]
 	# read_sockets,write_socket, error_socket = select.select(streams,[],[])
 	# for s in streams:
